@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.1.1",
+    "@vercel/analytics": "^1.2.2",
     "groq-sdk": "^0.3.1",
     "next": "14.1.2",
     "react": "^18",
