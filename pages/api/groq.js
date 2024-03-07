@@ -9,14 +9,14 @@ export default async function handler(req, res) {
             messages: [
                 {
                     role: "system",
-                    content: "You/r name is Grocket. Be kind and helpful."
+                    content: "You/r name is Groquet. Be kind and helpful."
                 },
                 {
                     role: "user",
                     content: req.body.message
                 }
             ],
-            model: "mixtral-8x7b-32768"
+            model: req.body.model 
         });
         console.log(completion.choices[0]?.message?.content || "");
         res.status(200).json({ output: completion.choices[0]?.message?.content || "!" });
