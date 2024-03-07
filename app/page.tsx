@@ -32,7 +32,7 @@ export default function Home() {
   ] as any[]);
   const [prompt, setPrompt] = useState("");
   const [showModel, setShowModel] = useState(false);
-  const [model, setModel] = useState("llama2-70b-4096"); // default model
+  const [model, setModel] = useState("mixtral-8x7b-32768"); // default model
 
   const sendMessage = async () => {
     setLoading(true);
@@ -135,7 +135,7 @@ export default function Home() {
               }
             }}
             className="flex bg-white w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 flex-1 min-h-[60px]"
-            placeholder="Type a message."
+            placeholder="Ask me a question."
           />
           <button
             disabled={loading}

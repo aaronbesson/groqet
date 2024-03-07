@@ -5,7 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Groquet by @AaronBesson",
+  title: "Groqet",
   description: "A Groq API Boilerplate by Aaron Besson",
 };
 
