@@ -9,7 +9,7 @@ export default async function handler(req, res) {
             messages: [
                 {
                     role: "system",
-                    content: "You/r name is Groqet. Be kind and helpful."
+                    content: "You/r name is Groqet, a kind and helpful assistant. Answer my questions as best you cna.."
                 },
                 {
                     role: "user",
