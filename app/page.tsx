@@ -83,30 +83,38 @@ export default function Home() {
 
   return (
     <main className="flex flex-col items-center justify-between w-full">
-      <div className="absolute right-0 m-2 opacity-30 hover:opacity-90 cursor-pointer transition-all duration-700 bg-white p-1 rounded-full flex gap-1 text-xs pr-2 items-center">
-        <Image src="/github-icon.svg" alt="Groquet" width={16} height={16} className="" />
-        Github
-
-      </div>
+      <div className="flex absolute top-0 m-2 gap-2 justify-between w-full px-2">
 
       <div
-      onClick={() => setShowModel(!showModel)}
-      className="absolute left-2 flex text-sm gap-2 m-2 px-2 cursor-pointer opacity-50 hover:opacity-90">
+        onClick={() => setShowModel(!showModel)}
+        className="flex text-sm gap-2 cursor-pointer opacity-50 hover:opacity-90">
         <RocketLaunchIcon className="h-5 w-5" />
         <p className="text-center">
           {model}
         </p>
       </div>
 
+      <div className="flex-1" />
+        <a
+          href='https://github.com/aaronbesson/groqet'
+          target="_blank"
+          className="opacity-30 hover:opacity-90 cursor-pointer transition-all duration-700 bg-white p-1 rounded-lg flex gap-1 text-xs pr-2 items-center">
+          <Image src="/github-icon.svg" alt="Groquet" width={16} height={16} className="" />
+          Github
+        </a>
+        <a href="https://www.buymeacoffee.com/aaronbesson" target="_blank">
+          <Image src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" className="w-24 h-6 rounded-lg shadow" width={100} height={32} />
+        </a>
+      </div>
       <div
-      ref={modelRef}
-      className={`
+        ref={modelRef}
+        className={`
       ${showModel ? "absolute" : "hidden"}
-       left-8 top-8 bg-white border h-auto p-2 rounded-xl shadow transition-all cursor-pointer`}>
+       left-8 top-8 bg-white border h-auto p-2 rounded-lg hover:shadow-xl transition-all cursor-pointer`}>
         {llmModels.map((llm) => (
           <div
-          onClick={() => {setModel(llm.model); setShowModel(false)}}
-          key={llm.id} className="flex gap-2 items-center opacity-50 hover:opacity-90">
+            onClick={() => { setModel(llm.model); setShowModel(false) }}
+            key={llm.id} className="flex gap-2 items-center opacity-50 hover:opacity-90">
             {llm.model}
           </div>
         ))}
