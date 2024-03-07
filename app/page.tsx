@@ -95,7 +95,7 @@ export default function Home() {
     <main className="flex flex-col items-center justify-between w-full h-svh">
       <div
         ref={windowRef}
-        className="flex-1 overflow-auto flex flex-col gap-4 w-full h-svh pb-12"
+        className="flex-1 overflow-auto flex flex-col gap-4 w-full h-svh py-12"
       >
         {messages.map((item, index) => item.value !== "" &&
           <div key={index} className={`mx-6 shadow border items-start rounded-2xl md:items-center max-w-5xl ${item.type === "user" ? "text-right self-end bg-green-100 ml-24" : "bg-white mr-24"}`}>
