@@ -1,11 +1,10 @@
 'use client';
-import { ArrowPathIcon } from "@heroicons/react/20/solid";
-import { use, useEffect, useRef, useState } from "react";
-import Typewriter from "./components/Typewriter"
-import Image from "next/image";
-import { RocketLaunchIcon } from "@heroicons/react/24/solid";
 import { MicrophoneIcon } from "@heroicons/react/16/solid";
-import { CloudArrowDownIcon } from "@heroicons/react/24/solid";
+import { ArrowPathIcon } from "@heroicons/react/20/solid";
+import { CloudArrowDownIcon, RocketLaunchIcon } from "@heroicons/react/24/solid";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import Typewriter from "./components/Typewriter";
 
 const llmModels = [
   {
@@ -21,7 +20,6 @@ const llmModels = [
 interface Window {
   webkitSpeechRecognition: any;
 }
-
 
 export default function Home() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -96,7 +94,7 @@ export default function Home() {
       if (data.output !== "") {
         setReply(data.output);
       }
-      if (isListening) {
+      if (isListening) { // if the app is listening, play the audio
         getAudioData(data.output);
       }
 
@@ -130,13 +128,13 @@ export default function Home() {
   }
 
   
-  useEffect(() => {
+  useEffect(() => { // check if speech recognition is available
     if ('webkitSpeechRecognition' in window) {
       const recognition = new (window as Window).webkitSpeechRecognition();
       recognition.continuous = true;
       recognition.interimResults = true;
 
-      recognition.onresult = (event: any) => {
+      recognition.onresult = (event: any) => { // on result, set the prompt and send the message
         for (let i = event.resultIndex; i < event.results.length; ++i) {
           if (event.results[i].isFinal) {
             const recordedText = event.results[i][0].transcript;
@@ -210,7 +208,7 @@ export default function Home() {
             />
           </div>)}
       </div>
-      <div className="p-2 flex items-center gap-4 w-full bg-gray-100">
+      <div className="p-2 flex items-center gap-4 w-full bg-gray-100 px-4">
         <CloudArrowDownIcon
         onClick={downloadMessages}
         className="h-6 w-6 text-gray-500" />
