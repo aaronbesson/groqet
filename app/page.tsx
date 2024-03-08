@@ -95,6 +95,10 @@ export default function Home() {
       if (data.output !== "") {
         setReply(data.output);
       }
+      if (isListening) {
+        getAudioData(data.output);
+      }
+
       setMessages(prevMessages => [...prevMessages, newMessage]);
       setLoading(false);
     } catch (error) {
@@ -163,14 +167,7 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (prompt !== "") {
-      sendMessage(prompt);
-    }
-  }, [prompt]);
-
-
-  useEffect(() => {
-    if (reply !== "") {
+    if (reply !== "" && isListening) {
       getAudioData(reply);
     }
   }, [reply]);
