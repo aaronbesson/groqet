@@ -5,6 +5,7 @@ import Typewriter from "./components/Typewriter"
 import Image from "next/image";
 import { RocketLaunchIcon } from "@heroicons/react/24/solid";
 import { MicrophoneIcon } from "@heroicons/react/16/solid";
+import { CloudArrowDownIcon } from "@heroicons/react/24/solid";
 
 const llmModels = [
   {
@@ -166,6 +167,17 @@ export default function Home() {
     }
   };
 
+  // download all messages as a text file
+  const downloadMessages = () => {
+    const messagesText = messages.map((message) => `${message.type}: ${message.value}`).join('\n');
+    const blob = new Blob([messagesText], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'groqet-messages.txt';
+    a.click();
+  };
+
   useEffect(() => {
     if (reply !== "" && isListening) {
       getAudioData(reply);
@@ -199,6 +211,9 @@ export default function Home() {
           </div>)}
       </div>
       <div className="p-2 flex items-center gap-4 w-full bg-gray-100">
+        <CloudArrowDownIcon
+        onClick={downloadMessages}
+        className="h-6 w-6 text-gray-500" />
         <input
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
