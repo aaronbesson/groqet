@@ -211,7 +211,7 @@ export default function Home() {
       <div className="p-2 flex items-center gap-4 w-full bg-gray-100 px-4">
         <CloudArrowDownIcon
         onClick={downloadMessages}
-        className="h-6 w-6 text-gray-500" />
+        className="h-6 w-6 text-gray-500 hover:text-black cursor-pointer" />
         <input
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
@@ -232,7 +232,7 @@ export default function Home() {
         </button>
       {!isListening ?  <MicrophoneIcon
       onClick={startListening}
-      className="h-6 w-6 text-gray-500 cursor-pointer" /> : <MicrophoneIcon
+      className="h-6 w-6 text-gray-500 hover:text-black cursor-pointer" /> : <MicrophoneIcon
       onClick={stopListening}
       className="h-6 w-6 text-red-500 animate-pulse cursor-pointer" />}
       </div>
@@ -247,7 +247,7 @@ export default function Home() {
 
       <div
         onClick={() => setShowModel(!showModel)}
-        className="flex text-sm gap-2 cursor-pointer opacity-50 hover:opacity-90">
+        className="flex text-xs gap-2 cursor-pointer opacity-50 hover:opacity-90 bg-white rounded-lg px-2 py-1 items-center hover:shadow">
         <RocketLaunchIcon className="h-5 w-5" />
         <p className="text-center">
           {model}
@@ -256,12 +256,12 @@ export default function Home() {
       <div
         ref={modelRef}
         className={`
-      ${showModel ? "absolute" : "hidden"}
-       left-8 top-8 bg-white border h-auto p-2 rounded-lg hover:shadow-xl transition-all cursor-pointer`}>
+      ${showModel ? "absolute h-auto" : "hidden h-0"}
+       left-3 top-8 bg-white border h-auto p-2 rounded-lg rounded-t-none hover:shadow-xl transition-all cursor-pointer duration-700`}>
         {llmModels.map((llm) => (
           <div
             onClick={() => { setModel(llm.model); setShowModel(false); }}
-            key={llm.id} className="flex gap-2 items-center opacity-50 hover:opacity-90">
+            key={llm.id} className="flex gap-2 items-center opacity-50 hover:opacity-90 text-sm">
             {llm.model}
           </div>
         ))}
@@ -273,9 +273,6 @@ export default function Home() {
         className="opacity-30 hover:opacity-90 cursor-pointer transition-all duration-700 bg-white p-1 rounded-lg flex gap-1 text-xs pr-2 items-center">
         <Image src="/github-icon.svg" alt="Groquet" width={16} height={16} className="" />
         Github
-      </a>
-      <a href="https://www.buymeacoffee.com/aaronbesson" target="_blank">
-        <Image src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" className="w-24 h-6 rounded-lg shadow" width={100} height={32} />
       </a>
     </div>;
   }
