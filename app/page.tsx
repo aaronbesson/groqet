@@ -1,9 +1,10 @@
 'use client';
 import { ArrowPathIcon } from "@heroicons/react/20/solid";
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import Typewriter from "./components/Typewriter"
 import Image from "next/image";
 import { RocketLaunchIcon } from "@heroicons/react/24/solid";
+import { MicrophoneIcon } from "@heroicons/react/16/solid";
 
 const llmModels = [
   {
@@ -16,7 +17,13 @@ const llmModels = [
   }
 ]
 
+interface Window {
+  webkitSpeechRecognition: any;
+}
+
+
 export default function Home() {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const windowRef = useRef<HTMLDivElement>(null);
   const modelRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
@@ -33,17 +40,42 @@ export default function Home() {
   const [prompt, setPrompt] = useState("");
   const [showModel, setShowModel] = useState(false);
   const [model, setModel] = useState("mixtral-8x7b-32768"); // default model
+  const [reply, setReply] = useState("");
+  const [recognition, setRecognition] = useState(null as any);
+  const [isListening, setIsListening] = useState(false);
+  const [audio, setAudio] = useState(null as any);
 
-  const sendMessage = async () => {
+  const getAudioData = async (message: any) => {
+    try {
+      const reqBody = { message };
+      const response = await fetch('/api/googletts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(reqBody)
+      });
+      const data = await response.json();
+      // Ensure proper data URI format for audio
+      const audioSrc = `data:audio/mp3;base64,${data.audioContent}`;
+      const audio = new Audio(audioSrc);
+      audioRef.current = audio;
+      console.log("Playing audio"); // Debugging log
+      audio.play();
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error!' + error);
+    }
+};
+
+  const sendMessage = async (recordedText: any) => {
     setLoading(true);
     const newMessage = { // add prompt to messages
       type: "user",
-      value: prompt
+      value: recordedText
     };
     setMessages(prevMessages => [...prevMessages, newMessage]); // set messages in state
     setPrompt(""); // clear the users prompt
     const reqBody = {
-      message: prompt,
+      message: recordedText,
       model: model
     }
     try {
@@ -60,6 +92,9 @@ export default function Home() {
         type: "assistant",
         value: data.output
       };
+      if (data.output !== "") {
+        setReply(data.output);
+      }
       setMessages(prevMessages => [...prevMessages, newMessage]);
       setLoading(false);
     } catch (error) {
@@ -67,7 +102,7 @@ export default function Home() {
       alert('Error!' + error)
     }
   };
-
+  
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
@@ -82,6 +117,63 @@ export default function Home() {
   }, [modelRef]);
 
 
+// stop all audio on click
+  const handleClick = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
+  }
+
+  
+  useEffect(() => {
+    if ('webkitSpeechRecognition' in window) {
+      const recognition = new (window as Window).webkitSpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+
+      recognition.onresult = (event: any) => {
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            const recordedText = event.results[i][0].transcript;
+            handleClick();
+            setPrompt(recordedText);
+            sendMessage(recordedText);
+          }
+        }
+      };
+      setRecognition(recognition);
+    } else {
+      alert('Speech recognition not available');
+    }
+  }, []);
+
+  const startListening = () => {
+    setReply("Hello! I'm Groqet, start speaking to ask me a question.")
+    setIsListening(true);
+    if (recognition) {
+      recognition.start();
+    }
+  };
+
+  const stopListening = () => {
+    setIsListening(false);
+    if (recognition) {
+      recognition.stop();
+    }
+  };
+
+  useEffect(() => {
+    if (prompt !== "") {
+      sendMessage(prompt);
+    }
+  }, [prompt]);
+
+
+  useEffect(() => {
+    if (reply !== "") {
+      getAudioData(reply);
+    }
+  }, [reply]);
   
   useEffect(() => {
     if (windowRef.current) {
@@ -98,7 +190,9 @@ export default function Home() {
         className="flex-1 overflow-auto flex flex-col gap-4 w-full h-svh py-12"
       >
         {messages.map((item, index) => item.value !== "" &&
-          <div key={index} className={`mx-6 shadow border items-start rounded-2xl md:items-center max-w-5xl ${item.type === "user" ? "text-right self-end bg-green-100 ml-24" : "bg-white mr-24"}`}>
+          <div 
+          onClick={() => handleClick()}
+          key={index} className={`mx-6 shadow border items-start rounded-2xl md:items-center max-w-5xl ${item.type === "user" ? "text-right self-end bg-green-100 ml-24" : "bg-white mr-24"}`}>
             <Typewriter
               fontSize={16}
               delay={0}
@@ -106,7 +200,6 @@ export default function Home() {
               text={item.value}
             />
           </div>)}
-
       </div>
       <div className="p-2 flex items-center gap-4 w-full bg-gray-100">
         <input
@@ -114,7 +207,7 @@ export default function Home() {
           onChange={(e) => setPrompt(e.target.value)}
           onKeyPress={(e) => {
             if (e.key === 'Enter') {
-              sendMessage();
+              sendMessage(prompt);
             }
           }}
           className="flex bg-white w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 flex-1"
@@ -122,11 +215,16 @@ export default function Home() {
         />
         <button
           disabled={loading}
-          onClick={() => sendMessage()}
+          onClick={() => sendMessage(prompt)}
           className="rounded-lg bg-black p-2 text-white">
           {loading ? <ArrowPathIcon className="h-6 w-6 animate-spin" aria-hidden="true" />
             : "Send"}
         </button>
+      {!isListening ?  <MicrophoneIcon
+      onClick={startListening}
+      className="h-6 w-6 text-gray-500 cursor-pointer" /> : <MicrophoneIcon
+      onClick={stopListening}
+      className="h-6 w-6 text-red-500 animate-pulse cursor-pointer" />}
       </div>
     </main>
   </div>
