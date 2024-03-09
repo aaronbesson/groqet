@@ -202,7 +202,7 @@ export default function Home() {
             onClick={() => handleClick()}
             key={index} className={`mx-6 shadow border items-start rounded-2xl md:items-center max-w-5xl ${item.type === "user" ? "text-right self-end bg-green-100 ml-24" : "bg-white mr-24"}`}>
             <Typewriter
-              fontSize={16}
+              fontSize={14}
               delay={0}
               infinite={false}
               text={item.value}
