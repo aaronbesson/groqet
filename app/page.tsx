@@ -212,8 +212,8 @@ export default function Home() {
         {!reply &&
           <div className="text-center flex flex-col gap-2">
             <Lottie animationData={groqet} loop={true} className="w-32 h-32 mx-auto" />
-            Welcome to Groqet<br />
-            by <a href="https://x.com/aaronbesson" target="_blank">@aaronbesson</a>
+            Welcome to Groqet
+            <a href="https://x.com/aaronbesson" className="text-xs opacity-50" target="_blank">by @aaronbesson</a>
           </div>}
 
       </div>
