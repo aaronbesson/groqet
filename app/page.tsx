@@ -67,17 +67,20 @@ export default function Home() {
   };
 
   const sendMessage = async (recordedText: any) => { // send message to groq api
+
     setLoading(true);
     const newMessage = { // add prompt to messages
       type: "user",
       value: recordedText
     };
+
     setMessages(prevMessages => [...prevMessages, newMessage]); // set messages in state
     setPrompt(""); // clear the users prompt
     const reqBody = {
       message: recordedText,
       model: model
     }
+
     try {
       const response = await fetch('/api/groq', { // send request to qroq api
         method: 'POST',
@@ -87,19 +90,22 @@ export default function Home() {
         body: JSON.stringify(reqBody)
       });
       const data = await response.json();
-      // set assistant message in state
+
       const newMessage = {
         type: "assistant",
         value: data.output
       };
+
       if (data.output !== "") {
         setReply(data.output);
       }
       if (isListening) { // if the app is listening, play the audio
         getAudioData(data.output);
       }
+
       setMessages(prevMessages => [...prevMessages, newMessage]);
       setLoading(false);
+
     } catch (error) {
       console.error('Error');
       alert('Error!' + error)
@@ -124,13 +130,11 @@ export default function Home() {
     }
   }
 
-
   useEffect(() => { // check if speech recognition is available
     if ('webkitSpeechRecognition' in window) {
       const recognition = new (window as Window).webkitSpeechRecognition();
       recognition.continuous = true;
       recognition.interimResults = true;
-
       recognition.onresult = (event: any) => { // on result, set the prompt and send the message
         for (let i = event.resultIndex; i < event.results.length; ++i) {
           if (event.results[i].isFinal) {
@@ -205,7 +209,7 @@ export default function Home() {
             />
           </div>)}
 
-        {messages.length > 0 &&
+        {!reply &&
           <div className="text-center flex flex-col gap-2">
             <Lottie animationData={groqet} loop={true} className="w-32 h-32 mx-auto" />
             Welcome to Groqet
